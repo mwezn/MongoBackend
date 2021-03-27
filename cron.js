@@ -1,20 +1,23 @@
+require('dotenv').config();
 var cron =require('node-cron');
 var express=require('express')
 var nodemailer=require('nodemailer')
 let app=express();
+
+let sender= process.env.EMAIL
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: YOUR_EMAIL_ADDRESS,
-      pass: YOUR_PASSWORD
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_PASS
     },
      tls: {
             rejectUnauthorized: false
         }
   });
   var mailOptions = {
-    from: 'YOUR_EMAIL_ADDRESS',
-    to: 'RECIPIENT',
+    from: `${sender}`,
+    to: 'wezleyg78@gmail.com',
     subject: 'Welcome after Registering! ',
     html: '<h1>That was easy!</h1>'
   };
