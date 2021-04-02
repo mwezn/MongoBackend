@@ -40,12 +40,14 @@ var transporter = nodemailer.createTransport({
 
 cron.schedule('* * * * *', ()=>{
     let t=new Date();
-    let f=t.toISOString();
+    let f=t.toLocaleTimeString();
     User.find({}, (err, d)=>{
         if (err) console.log(err)
         if (d) console.log(d)
-        mailOptions.html=`Email sent at: ${f.slice(11,19)} & the user in db is ${d} `
+        mailOptions.html=`Email sent at: ${t} & the collection in db is ${d} the length of this collection
+        ${d.length}`
         console.log(d)
+        
         transporter.sendMail(mailOptions, function(error, info){
             if (error) {
               console.log(error);
@@ -54,7 +56,7 @@ cron.schedule('* * * * *', ()=>{
             }
           });
     })
-    //mailOptions.html=`Email sent at: ${f.slice(11,19)} & the user in db is ${users} `
+    
     
     console.log('running every minute');
     
