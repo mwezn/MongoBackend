@@ -30,11 +30,20 @@ router.get('/users', async (req, res) => {
     }
 })
 
-router.post('/addTodo', async (req,res)=>{
-  console.log(req.body.data)
-  res.status(200).send();
+router.post('/addTodo', async (req,res,done)=>{
+  console.log("LOG"+ req.body.data.log)
+  let query={_id: req.body.data["_id"]}
+  let update= { $addToSet: { log: req.body.data.log }}
+  User.findOneAndUpdate(query,update, {new: true}, (err,person)=>{
+    if(err) console.log(err)
+    console.log(person)
+    done(null, person)
+    res.json(person)
+    
+  })
 
 })
+
 
 router.post('/login', async (req, res) =>{
 
