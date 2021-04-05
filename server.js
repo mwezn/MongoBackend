@@ -38,7 +38,7 @@ var transporter = nodemailer.createTransport({
   };
 
 
-cron.schedule('* * * * *', ()=>{
+/*cron.schedule('* * * * *', ()=>{
     let t=new Date();
     let f=t.toLocaleTimeString();
     User.find({}, (err, d)=>{
@@ -61,7 +61,7 @@ cron.schedule('* * * * *', ()=>{
     console.log('running every minute');
     
 
-})
+})*/
 
 
 db.on('error', (error) => console.error(error))
