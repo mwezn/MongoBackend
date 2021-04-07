@@ -30,6 +30,21 @@ router.get('/users', async (req, res) => {
     }
 })
 
+router.post('/removeTodo', async (req, res, done)=>{
+  console.log(req.body)
+  let update=req.body.Item;
+
+  let query=req.body.data["_id"];
+  User.findByIdAndUpdate(query, {$pull: { log: update[0]}},{new:true},(err,person)=>{
+    if(err) console.log(err)
+    console.log(person)
+    done(null, person)
+    res.json(person)
+  })
+})
+
+
+
 router.post('/addTodo', async (req,res,done)=>{
   console.log("LOG"+ req.body.data.log)
   let query={_id: req.body.data["_id"]}
