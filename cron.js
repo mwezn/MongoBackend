@@ -30,7 +30,10 @@ var transporter = nodemailer.createTransport({
     from: `${sender}`,
     to: 'wezleyg78@gmail.com',
     subject: 'Welcome after Registering! ',
-    html: '<h1>That was easy!</h1>'
+    html: '<h1>Welcome </h1>',
+    attachments: [ 
+      {filename: 'EmailImage.jpg', path: './EmailImage.jpg'}
+    ]
   };
 
 function cronFunc(){

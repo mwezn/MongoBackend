@@ -107,18 +107,23 @@ router.post('/register', async (req, res) => {
         console.log(req.body.data.email)
         const checkuser= await User.findOne({email: email})
         if (checkuser) {return res.status(400).send("Email already exists")}
-        var mailOptions = {
-            from: `${process.env.EMAIL}`,
-            to: email,
-            subject: 'Welcome Youve Registered!',
-            html: '<h1>That was easy!</h1>'
-          };
+        ;
 
         const user = await User.create({
             email,
             username,
             password
         })
+        var mailOptions = {
+          from: `${process.env.EMAIL}`,
+          to: email,
+          subject: 'Welcome after Registering!',
+          html: `<h1>Hello ${user.username} </h1>`,
+          attachments: [ 
+            {filename: 'EmailImage.jpg', path: './EmailImage.jpg'}
+          ]
+
+        }
         transporter.sendMail(mailOptions, function(error, info){
             if (error) {
               console.log(error);
