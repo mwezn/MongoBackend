@@ -26,50 +26,9 @@ var transporter = nodemailer.createTransport({
             rejectUnauthorized: false
         }
   });
-  var mailOptions = {
-    from: `${sender}`,
-    to: 'wezleyg78@gmail.com',
-    subject: 'Welcome after Registering! ',
-    html: '<h1>Welcome </h1>',
-    attachments: [ 
-      {filename: 'EmailImage.jpg', path: './EmailImage.jpg'}
-    ]
-  };
+ 
 
-function cronFunc(){
-  cron.schedule('* * * * *', ()=>{
-    let t=new Date();
-    let f=t.toISOString();
-    User.find({}, (err,d)=>{
-      mailOptions.html=`Email sent at: ${f.slice(11,19)} & the user in db is ${d} `
-      console.log(d)
-      console.log('running every minute');
-      transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-      });
-
-    })
-
-    
-
-})
-  
-}
-
-function mongoQueryOperator(){
-  let t=new Date();
-  let T=t.toISOString();
-  User.find({log: {date:{$lt: t } }},(err,data)=>{
-    if (err) console.log(err)
-    console.log(data)
-  })
-
-}
-
+// The following function separates users scheduled tasks from the overdue ones!
 function performUpdate(){
   cron.schedule('*/10 * * * * *', ()=>{
     let t=new Date();
@@ -109,6 +68,7 @@ function onTime(){
   };
   cron.schedule('*/10 * * * * *', ()=>{
     let t=new Date();
+    let GMT=t.toLocaleString();
     let T=t.toISOString();
     User.find({}, (err,d)=>{
       if (err) console.log(err)
@@ -116,11 +76,9 @@ function onTime(){
       console.log(t)
       for(let i=0;i<t;i++){
         let f=d[i].log
-        //console.log(f,typeof(f))
         let res=f.filter(z=>z.date==T.slice(0,10))
-        //res.push(d[i].email)
         console.log(res)
-        mailOpts.html=`Email sent at: ${T} & your tasks for today: <ul>`
+        mailOpts.html=`Email sent at: ${GMT.slice(10,GMT.length)} on ${GMT.slice(0,10)}<br>Your tasks for today: <ul>`
         res.forEach((d,i)=>{
           mailOpts.html+=`<li>${JSON.stringify(d)}</li>`
         })
@@ -146,7 +104,7 @@ function onTime(){
 }
 
 
-//mongoQueryOperator();
-//onTime();
-performUpdate()
+
+//performUpdate()
+onTime();
 app.listen(3002);
