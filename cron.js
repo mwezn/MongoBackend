@@ -60,6 +60,16 @@ function cronFunc(){
   
 }
 
+function mongoQueryOperator(){
+  let t=new Date();
+  let T=t.toISOString();
+  User.find({log: {date:{$lt: t } }},(err,data)=>{
+    if (err) console.log(err)
+    console.log(data)
+  })
+
+}
+
 function performUpdate(){
   cron.schedule('*/10 * * * * *', ()=>{
     let t=new Date();
@@ -67,13 +77,17 @@ function performUpdate(){
     User.find({}, (err,d)=>{
       if (err) console.log(err)
       let t=d.length;
-      console.log(t)
+      console.log(d)
       for(let i=0;i<t;i++){
         let f=d[i].log
-        //console.log(f,typeof(f))
-        let res=f.filter(z=>z.date<=T.slice(0,10))
-        res.push(d[i].email)
+        let Id= d[i]['_id']
+        console.log(Id)
+        let res=f.filter(z=>z.date<T.slice(0,10))
         console.log(res)
+        User.findByIdAndUpdate(Id,{$pull:{log:{$in: res}}, $addToSet:{overdue: res}},{new: true}, (err,user)=>{
+          if(err) console.log(err)
+          console.log(user)
+        } )
 
     }
 
@@ -88,7 +102,10 @@ function onTime(){
     from: `${sender}`,
     to: '',
     subject: 'Your tasks for today ',
-    html: '<h1>That was easy!</h1>'
+    html: '<h1>That was easy!</h1>',
+    attachments: [ 
+      {filename: 'EmailImage.jpg', path: './EmailImage.jpg'}
+    ]
   };
   cron.schedule('*/10 * * * * *', ()=>{
     let t=new Date();
@@ -129,5 +146,7 @@ function onTime(){
 }
 
 
-onTime();
+//mongoQueryOperator();
+//onTime();
+performUpdate()
 app.listen(3002);
