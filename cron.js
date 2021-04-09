@@ -30,27 +30,35 @@ var transporter = nodemailer.createTransport({
 
 // The following function separates users scheduled tasks from the overdue ones!
 function performUpdate(){
-  cron.schedule('*/10 * * * * *', ()=>{
+  cron.schedule('* * * * *', ()=>{
     let t=new Date();
     let T=t.toISOString();
+    let GMT=t.toLocaleTimeString()
     User.find({}, (err,d)=>{
       if (err) console.log(err)
       let t=d.length;
-      console.log(d)
       for(let i=0;i<t;i++){
         let f=d[i].log
         let Id= d[i]['_id']
-        console.log(Id)
         let res=f.filter(z=>z.date<T.slice(0,10))
-        console.log(res)
+        let res2=f.filter(z=>z.date==T.slice(0,10))
+        let res3=res2.filter(z=>z.time<GMT)
+        
         User.findByIdAndUpdate(Id,{$pull:{log:{$in: res}}, $addToSet:{overdue: res}},{new: true}, (err,user)=>{
           if(err) console.log(err)
           console.log(user)
         } )
+        User.findByIdAndUpdate(Id,{$pull:{log:{$in: res3}}, $addToSet:{overdue: res3}},{new: true}, (err,user)=>{
+          if(err) console.log(err)
+          console.log(user)
+        } )
+        
+
+        
 
     }
 
-      console.log('running every 10 secs')
+      console.log('running every 60 secs')
     })
 
 })
@@ -105,6 +113,6 @@ function onTime(){
 
 
 
-//performUpdate()
-onTime();
+performUpdate()
+//onTime();
 app.listen(3002);

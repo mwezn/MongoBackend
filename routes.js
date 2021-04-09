@@ -5,7 +5,7 @@ const User= require("./models/Emailschema")
 var bcrypt=require('bcrypt')
 var nodemailer = require('nodemailer');
 var jwt=require('jsonwebtoken');
-const hbs= require('nodemailer-express-handlebars')
+
 
 
 var transporter = nodemailer.createTransport({
@@ -18,11 +18,6 @@ var transporter = nodemailer.createTransport({
           rejectUnauthorized: false
       }
 });
-
-transporter.use('compile', hbs({
-  viewEngine: 'express-handlebars',
-  viewPath: './views'
-}))
 
 
 
