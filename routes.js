@@ -26,21 +26,25 @@ transporter.use('compile', hbs({
 
 
 
-router.get('/users', async (req, res) => {
-    try {
-        const users = await User.find()
-        return res.status(200).json(users)
-    } catch (error) {
-        return res.status(500).json({"error":error})
-    }
-})
-
 router.post('/removeTodo', async (req, res, done)=>{
   console.log(req.body)
   let update=req.body.Item;
 
   let query=req.body.data["_id"];
   User.findByIdAndUpdate(query, {$pull: { log: update[0]}},{new:true},(err,person)=>{
+    if(err) console.log(err)
+    console.log(person)
+    done(null, person)
+    res.json(person)
+  })
+})
+
+router.post('/removeOverdue', async (req, res, done)=>{
+  console.log(req.body)
+  let update=req.body.Item;
+
+  let query=req.body.data["_id"];
+  User.findByIdAndUpdate(query, {$pull: { overdue: update[0]}},{new:true},(err,person)=>{
     if(err) console.log(err)
     console.log(person)
     done(null, person)
