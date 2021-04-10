@@ -5,6 +5,7 @@ var nodemailer=require('nodemailer')
 let app=express();
 const mongoose=require('mongoose')
 const User = require('./models/Emailschema')
+const ejs= require('ejs')
 
 mongoose.connect(process.env.DATABASE_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 const db = mongoose.connection
@@ -26,6 +27,36 @@ var transporter = nodemailer.createTransport({
             rejectUnauthorized: false
         }
   });
+
+
+
+function sendMail(){
+  cron.schedule('*/30 * * * * *',()=>{
+    let t= new Date()
+    let GMT=t.toLocaleString();
+
+    User.find({}, (err,d)=>{
+      if (err) console.log(err)
+      let t=d.length;
+      for(let i=0;i<t;i++){
+        ejs.renderFile(__dirname + "/views/EmailTemplate.ejs", {userName: d[i].username, time: GMT.slice(10,GMT.length), date: GMT.slice(0,10)},
+        (err,data)=>{
+          if (err) console.log(err)
+          var mainOptions={
+            from: `${sender}`,
+            to: `${d[i].email}`,
+            subject: 'Your tasks for today ',
+            html: data,
+          }
+          transporter.sendMail(mainOptions,(err,info)=>{
+            if (err) console.log(err)
+            console.log(info.response)
+          })
+        })
+      }
+    })
+  })
+}
  
 
 // The following function separates users scheduled tasks from the overdue ones!
@@ -112,7 +143,5 @@ function onTime(){
 }
 
 
-
-performUpdate()
-//onTime();
+sendMail()
 app.listen(3002);

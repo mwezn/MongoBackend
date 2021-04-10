@@ -5,6 +5,7 @@ const User= require("./models/Emailschema")
 var bcrypt=require('bcrypt')
 var nodemailer = require('nodemailer');
 var jwt=require('jsonwebtoken');
+let ejs= require('ejs')
 
 
 
@@ -19,7 +20,9 @@ var transporter = nodemailer.createTransport({
       }
 });
 
-
+router.get('/', (req,res)=>{
+  res.sendFile(__dirname+'/views/EmailImage.jpg')
+})
 
 router.post('/removeTodo', async (req, res, done)=>{
   console.log(req.body)
