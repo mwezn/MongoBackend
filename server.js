@@ -5,9 +5,7 @@ const mongoose = require('mongoose')
 const routes = require('./routes') // includes the routes.js file
 const cors = require('cors') // includes cors module
 const User = require('./models/Emailschema')
-var cron= require('node-cron');
 var nodemailer=require('nodemailer')
-const ejs=require('ejs')
 const path=require('path')
 
 app.use(cors()) // We're telling express to use CORS

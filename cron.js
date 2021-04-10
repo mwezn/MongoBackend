@@ -39,13 +39,13 @@ function sendMail(){
       if (err) console.log(err)
       let t=d.length;
       for(let i=0;i<t;i++){
-        ejs.renderFile(__dirname + "/views/EmailTemplate.ejs", {userName: d[i].username, time: GMT.slice(10,GMT.length), date: GMT.slice(0,10)},
+        ejs.renderFile(__dirname + "/views/ReminderEmail.ejs", {userName: d[i].username, time: GMT.slice(10,GMT.length), date: GMT.slice(0,10)},
         (err,data)=>{
           if (err) console.log(err)
           var mainOptions={
             from: `${sender}`,
             to: `${d[i].email}`,
-            subject: 'Your tasks for today ',
+            subject: 'Succesfully Registered ',
             html: data,
           }
           transporter.sendMail(mainOptions,(err,info)=>{

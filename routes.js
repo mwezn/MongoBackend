@@ -8,7 +8,7 @@ var jwt=require('jsonwebtoken');
 let ejs= require('ejs')
 
 
-
+let sender= process.env.EMAIL
 var transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -114,36 +114,33 @@ router.post('/register', async (req, res) => {
         console.log(req.body.data.email)
         const checkuser= await User.findOne({email: email})
         if (checkuser) {return res.status(400).send("Email already exists")}
-        ;
+        let t= new Date();
+        let GMT= t.toLocaleString();
 
-        const user = await User.create({
-            email,
-            username,
-            password
+        await User.create({email,username,password}, (err,user)=>{
+          ejs.renderFile(__dirname + "/views/RegisterEmail.ejs", {userName: username, time: GMT.slice(10,GMT.length), date: GMT.slice(0,10)},
+        (err,data)=>{
+          if (err) console.log(err)
+          var mainOptions={
+            from: `${sender}`,
+            to: `${email}`,
+            subject: 'Succesfully Registered ',
+            html: data,
+          }
+          transporter.sendMail(mainOptions,(err,info)=>{
+            if (err) console.log(err)
+            console.log(info.response)
+          })
         })
-        var mailOptions = {
-          from: `${process.env.EMAIL}`,
-          to: email,
-          subject: 'Welcome after Registering!',
-          html: `<h1>Hello ${user.username} </h1>`,
-          attachments: [ 
-            {filename: 'EmailImage.jpg', path: './EmailImage.jpg'}
-          ]
-          
-        }
-        transporter.sendMail(mailOptions, function(error, info){
-            if (error) {
-              console.log(error);
-            } else {
-              console.log('Email sent: ' + info.response);
-            }
-          });
-
-        return res.status(200).json(user)
-    } catch (error) {
+        return res.status(200).json(user)  
+      })
+      
+      }
+      catch (error) {
         return res.status(500).json({"error":error})
-    }
-    
-})
+      }
+
+  })
+
 
 module.exports=router;
