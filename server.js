@@ -8,11 +8,13 @@ const User = require('./models/Emailschema')
 var nodemailer=require('nodemailer')
 const path=require('path')
 
+
 app.use(cors()) // We're telling express to use CORS
 app.use(express.json()) // we need to tell server to use json as well
 app.use(routes)
 app.use(express.static(path.join(__dirname, '')))
 app.use(express.static(path.join(__dirname, 'views/')))
+
 mongoose.connect(process.env.DATABASE_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 const db = mongoose.connection
 

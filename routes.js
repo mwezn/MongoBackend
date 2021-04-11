@@ -8,6 +8,7 @@ var jwt=require('jsonwebtoken');
 let ejs= require('ejs')
 
 
+
 let sender= process.env.EMAIL
 var transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -20,8 +21,15 @@ var transporter = nodemailer.createTransport({
       }
 });
 
-router.get('/', (req,res)=>{
-  res.sendFile(__dirname+'/views/EmailImage.jpg')
+
+router.post('/updateCentralState', async (req, res, done)=>{
+  let id=req.body.data['_id']
+  console.log(id)
+  await User.findOne({_id: id}, (err,person)=>{
+    if (err) console.log(err)
+    done(null, person)
+    res.json(person)
+  })
 })
 
 router.post('/removeTodo', async (req, res, done)=>{

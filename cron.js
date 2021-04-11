@@ -32,6 +32,7 @@ var transporter = nodemailer.createTransport({
 
 function sendMail(){
   cron.schedule('*/30 * * * * *',()=>{
+    console.log("Running every 30 seconds")
     let t= new Date()
     let GMT=t.toLocaleString();
 
@@ -39,7 +40,7 @@ function sendMail(){
       if (err) console.log(err)
       let t=d.length;
       for(let i=0;i<t;i++){
-        ejs.renderFile(__dirname + "/views/ReminderEmail.ejs", {userName: d[i].username, time: GMT.slice(10,GMT.length), date: GMT.slice(0,10)},
+        ejs.renderFile(__dirname + "/views/ReminderEmail.ejs", {userName: d[i].username, time: GMT.slice(10,GMT.length), date: GMT.slice(0,10), mongoDB: d[i].log},
         (err,data)=>{
           if (err) console.log(err)
           var mainOptions={
@@ -61,7 +62,8 @@ function sendMail(){
 
 // The following function separates users scheduled tasks from the overdue ones!
 function performUpdate(){
-  cron.schedule('* * * * *', ()=>{
+  cron.schedule('*/30 * * * * *', ()=>{
+    console.log("performing Update")
     let t=new Date();
     let T=t.toISOString();
     let GMT=t.toLocaleTimeString()
@@ -88,8 +90,6 @@ function performUpdate(){
         
 
     }
-
-      console.log('running every 60 secs')
     })
 
 })
@@ -142,6 +142,5 @@ function onTime(){
 })
 }
 
-
-sendMail()
+performUpdate()
 app.listen(3002);
