@@ -78,13 +78,13 @@ function performUpdate(){
         let res3=res2.filter(z=>z.time[0]=='0'?z.time.slice(1,5)<GMT.slice(0,5):z.time<GMT.slice(0,5))
         let res4=res2.filter(z=>z.time==GMT.slice(0,5))
         if(res4.length!==0){
-          ejs.renderFile(__dirname + "/views/ReminderEmail.ejs", {userName: d[i].username, time: GMT.slice(10,GMT.length), date: GMT.slice(0,10), mongoDB: res4},
+          ejs.renderFile(__dirname + "/views/ReminderEmail.ejs", {userName: d[i].username, time: GMT, date: T.slice(0,10), mongoDB: res4},
           (err,data)=>{
           if (err) console.log(err)
           var mainOptions={
             from: `${sender}`,
             to: `${d[i].email}`,
-            subject: 'Succesfully Registered ',
+            subject: 'Your reminder ',
             html: data,
           }
           transporter.sendMail(mainOptions,(err,info)=>{
