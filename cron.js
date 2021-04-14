@@ -75,9 +75,26 @@ function performUpdate(){
         let Id= d[i]['_id']
         let res=f.filter(z=>z.date<T.slice(0,10))
         let res2=f.filter(z=>z.date==T.slice(0,10))
-        let res3=res2.filter(z=>z.time<GMT.slice(0,4))
-        //let res4=res2.filter(z=>z.time==GMT.slice(0,5))
-        
+        let res3=res2.filter(z=>z.time[0]=='0'?z.time.slice(1,5)<GMT.slice(0,5):z.time<GMT.slice(0,5))
+        let res4=res2.filter(z=>z.time==GMT.slice(0,5))
+        if(res4.length!==0){
+          ejs.renderFile(__dirname + "/views/ReminderEmail.ejs", {userName: d[i].username, time: GMT.slice(10,GMT.length), date: GMT.slice(0,10), mongoDB: res4},
+          (err,data)=>{
+          if (err) console.log(err)
+          var mainOptions={
+            from: `${sender}`,
+            to: `${d[i].email}`,
+            subject: 'Succesfully Registered ',
+            html: data,
+          }
+          transporter.sendMail(mainOptions,(err,info)=>{
+            if (err) console.log(err)
+            console.log(info.response)
+          })
+        })
+
+
+        }
         User.findByIdAndUpdate(Id,{$pull:{log:{$in: res}}, $addToSet:{overdue: res}},{new: true}, (err,user)=>{
           if(err) console.log(err)
           console.log(user)
@@ -86,6 +103,7 @@ function performUpdate(){
           if(err) console.log(err)
           console.log(user)
         } )
+        
 
         
 
