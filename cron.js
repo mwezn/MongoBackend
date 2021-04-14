@@ -75,7 +75,8 @@ function performUpdate(){
         let Id= d[i]['_id']
         let res=f.filter(z=>z.date<T.slice(0,10))
         let res2=f.filter(z=>z.date==T.slice(0,10))
-        let res3=res2.filter(z=>z.time<GMT)
+        let res3=res2.filter(z=>z.time<GMT.slice(0,4))
+        //let res4=res2.filter(z=>z.time==GMT.slice(0,5))
         
         User.findByIdAndUpdate(Id,{$pull:{log:{$in: res}}, $addToSet:{overdue: res}},{new: true}, (err,user)=>{
           if(err) console.log(err)
@@ -85,6 +86,7 @@ function performUpdate(){
           if(err) console.log(err)
           console.log(user)
         } )
+
         
 
         
