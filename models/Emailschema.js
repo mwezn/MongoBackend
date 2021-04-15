@@ -18,7 +18,8 @@ var UserSchema = new mongoose.Schema({
     required: true,
   },
   log: [],
-  overdue: []
+  overdue: [],
+  done: []
 
 
 });

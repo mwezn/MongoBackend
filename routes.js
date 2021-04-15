@@ -31,10 +31,46 @@ router.post('/updateCentralState', async (req, res, done)=>{
   })
 })
 
+router.post('/removeDone', async (req, res, done)=>{
+  console.log(req.body)
+  let update=req.body.Item;
+  let query=req.body.data["_id"];
+  User.findByIdAndUpdate(query, {$pull: { done: update[0]}},{new:true},(err,person)=>{
+    if(err) console.log(err)
+    console.log(person)
+    done(null, person)
+    res.json(person)
+  })
+})
+
+router.post('/dueDone', async (req, res, done)=>{
+  console.log(req.body)
+  let update=req.body.Item;
+  let query=req.body.data["_id"];
+  User.findByIdAndUpdate(query, {$pull: { log: update[0]},$addToSet: {done: update[0]}},{new:true},(err,person)=>{
+    if(err) console.log(err)
+    console.log(person)
+    done(null, person)
+    res.json(person)
+  })
+})
+
+router.post('/overdueDone', async (req, res, done)=>{
+  console.log(req.body)
+  let update=req.body.Item;
+  let query=req.body.data["_id"];
+  User.findByIdAndUpdate(query, {$pull: { overdue: update[0]},$addToSet: {done: update[0]}},{new:true},(err,person)=>{
+    if(err) console.log(err)
+    console.log(person)
+    done(null, person)
+    res.json(person)
+  })
+})
+
+
 router.post('/removeTodo', async (req, res, done)=>{
   console.log(req.body)
   let update=req.body.Item;
-
   let query=req.body.data["_id"];
   User.findByIdAndUpdate(query, {$pull: { log: update[0]}},{new:true},(err,person)=>{
     if(err) console.log(err)
@@ -47,7 +83,6 @@ router.post('/removeTodo', async (req, res, done)=>{
 router.post('/removeOverdue', async (req, res, done)=>{
   console.log(req.body)
   let update=req.body.Item;
-
   let query=req.body.data["_id"];
   User.findByIdAndUpdate(query, {$pull: { overdue: update[0]}},{new:true},(err,person)=>{
     if(err) console.log(err)

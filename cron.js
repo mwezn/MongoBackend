@@ -28,36 +28,6 @@ var transporter = nodemailer.createTransport({
         }
   });
 
-
-
-function sendMail(){
-  cron.schedule('*/30 * * * * *',()=>{
-    console.log("Running every 30 seconds")
-    let t= new Date()
-    let GMT=t.toLocaleString();
-
-    User.find({}, (err,d)=>{
-      if (err) console.log(err)
-      let t=d.length;
-      for(let i=0;i<t;i++){
-        ejs.renderFile(__dirname + "/views/ReminderEmail.ejs", {userName: d[i].username, time: GMT.slice(10,GMT.length), date: GMT.slice(0,10), mongoDB: d[i].log},
-        (err,data)=>{
-          if (err) console.log(err)
-          var mainOptions={
-            from: `${sender}`,
-            to: `${d[i].email}`,
-            subject: 'Succesfully Registered ',
-            html: data,
-          }
-          transporter.sendMail(mainOptions,(err,info)=>{
-            if (err) console.log(err)
-            console.log(info.response)
-          })
-        })
-      }
-    })
-  })
-}
  
 
 // The following function separates users scheduled tasks from the overdue ones!
@@ -112,53 +82,6 @@ function performUpdate(){
 
     }
     })
-
-})
-}
-
-function onTime(){
-  var mailOpts = {
-    from: `${sender}`,
-    to: '',
-    subject: 'Your tasks for today ',
-    html: '<h1>That was easy!</h1>',
-    attachments: [ 
-      {filename: 'EmailImage.jpg', path: './EmailImage.jpg'}
-    ]
-  };
-  cron.schedule('*/10 * * * * *', ()=>{
-    let t=new Date();
-    let GMT=t.toLocaleString();
-    let T=t.toISOString();
-    User.find({}, (err,d)=>{
-      if (err) console.log(err)
-      let t=d.length;
-      console.log(t)
-      for(let i=0;i<t;i++){
-        let f=d[i].log
-        let res=f.filter(z=>z.date==T.slice(0,10))
-        console.log(res)
-        mailOpts.html=`Email sent at: ${GMT.slice(10,GMT.length)} on ${GMT.slice(0,10)}<br>Your tasks for today: <ul>`
-        res.forEach((d,i)=>{
-          mailOpts.html+=`<li>${JSON.stringify(d)}</li>`
-        })
-        mailOpts.html+='</ul>'
-        mailOpts.to=`${d[i].email}`
-    
-        transporter.sendMail(mailOpts, function(error, info){
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-      })
-
-    }
-    
-
-      console.log('running every 10 secs')
-    })
-
 
 })
 }
