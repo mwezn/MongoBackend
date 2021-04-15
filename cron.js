@@ -85,6 +85,6 @@ function performUpdate(){
 
 })
 }
-
-performUpdate()
-app.listen(3002);
+module.exports.performUpdate= performUpdate;
+//performUpdate()
+//app.listen(3002);

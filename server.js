@@ -7,6 +7,7 @@ const cors = require('cors') // includes cors module
 const User = require('./models/Emailschema')
 var nodemailer=require('nodemailer')
 const path=require('path')
+const cronUpdate= require('./cron')
 
 
 app.use(cors()) // We're telling express to use CORS
@@ -18,17 +19,23 @@ app.use(express.static(path.join(__dirname, 'views/')))
 mongoose.connect(process.env.DATABASE_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 const db = mongoose.connection
 
-User.find({}, (err, d)=>{
+/*User.find({}, (err, d)=>{
     if (err) console.log(err)
     if (d) console.log(d)
-})
+})*/
 
 
 db.on('error', (error) => console.error(error))
-db.once('open', () => console.log('database connected'))
+db.once('open', () => {
+    console.log('database connected')
+    cronUpdate.performUpdate()
+    app.listen(process.env.PORT,()=>{
+        console.log("The API is running on Port:" + process.env.PORT)
+    })
+    
 
-app.listen(process.env.PORT,()=>{
-    console.log("The API is running on Port:" + process.env.PORT)
 })
+
+
 
 
