@@ -28,7 +28,7 @@ function performUpdate(){
     console.log("performing Update")
     let t=new Date();
     let T=t.toISOString();
-    let GMT=t.toLocaleTimeString()
+    let GMT= t.toLocaleTimeString([],{hour:'2-digit', minute:'2-digit',hour12:false})
     User.find({}, (err,d)=>{
       if (err) console.log(err)
       let t=d.length;
@@ -38,10 +38,12 @@ function performUpdate(){
         let Id= d[i]['_id']
         let res=f.filter(z=>z.date<T.slice(0,10))
         let res2=f.filter(z=>z.date==T.slice(0,10))
-        let res3=res2.filter(z=>z.time[0]=='0'?z.time.slice(1,5)<GMT.slice(0,5):z.time.slice(0,2)>12?(z.time.slice(0,2)-12+z.time.slice(2,5))<GMT.slice(0,5):z.time<GMT.slice(0,5))
-        let res4=res2.filter(z=>z.time.slice(0,2)>12?(z.time.slice(0,2)-12+z.time.slice(2,5))==GMT.slice(0,5):z.time==GMT.slice(0,5))
-        if(res4.length!==0){
-          ejs.renderFile(__dirname + "/views/ReminderEmail.ejs", {userName: d[i].username, time: GMT, date: T.slice(0,10), mongoDB: res4},
+        let pastTime=res2.filter(z=>z.time<GMT)
+        let now=res2.filter(z=>z.time==GMT)
+        //let res3=res2.filter(z=>z.time[0]=='0'?z.time.slice(1,5)<GMT.slice(0,5):z.time.slice(0,2)>12?(z.time.slice(0,2)-12+z.time.slice(2,5))<GMT.slice(0,5):z.time<GMT.slice(0,5))
+        //let res4=res2.filter(z=>z.time.slice(0,2)>12?(z.time.slice(0,2)-12+z.time.slice(2,5))==GMT.slice(0,5):z.time==GMT.slice(0,5))
+        if(now.length!==0){
+          ejs.renderFile(__dirname + "/views/ReminderEmail.ejs", {userName: d[i].username, time: GMT, date: T.slice(0,10), mongoDB: now},
           (err,data)=>{
           if (err) console.log(err)
           var mainOptions={
@@ -64,7 +66,7 @@ function performUpdate(){
           user.save();
           
         } )
-        User.findByIdAndUpdate(Id,{$pull:{log:{$in: res3}}, $addToSet:{overdue: res3}},{new: true}, (err,user)=>{
+        User.findByIdAndUpdate(Id,{$pull:{log:{$in: pastTime}}, $addToSet:{overdue: pastTime}},{new: true}, (err,user)=>{
           if(err) console.log(err)
           console.log(user)
           user.save();
