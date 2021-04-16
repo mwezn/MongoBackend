@@ -26,7 +26,7 @@ router.post('/updateCentralState', async (req, res, done)=>{
   let id=req.body.data['_id']
   await User.findOne({_id: id}, (err,person)=>{
     if (err) console.log(err)
-    done(null, person)
+    //done(null, person)
     res.json(person)
   })
 })

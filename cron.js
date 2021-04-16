@@ -3,18 +3,10 @@ var cron =require('node-cron');
 var express=require('express')
 var nodemailer=require('nodemailer')
 let app=express();
-const mongoose=require('mongoose')
 const User = require('./models/Emailschema')
 const ejs= require('ejs')
 
-mongoose.connect(process.env.DATABASE_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-const db = mongoose.connection
-db.on('error', (error) => console.error(error))
-db.once('open', () => {
-  console.log('database connected')
 
-
-})
 
 let sender= process.env.EMAIL
 var transporter = nodemailer.createTransport({
@@ -46,8 +38,8 @@ function performUpdate(){
         let Id= d[i]['_id']
         let res=f.filter(z=>z.date<T.slice(0,10))
         let res2=f.filter(z=>z.date==T.slice(0,10))
-        let res3=res2.filter(z=>z.time[0]=='0'?z.time.slice(1,5)<GMT.slice(0,4):z.time.slice(0,2)>12?(z.time.slice(0,2)-12+z.time.slice(2,5))<GMT.slice(0,4):z.time<GMT.slice(0,4))
-        let res4=res2.filter(z=>z.time.slice(0,2)>12?(z.time.slice(0,2)-12+z.time.slice(2,5))==GMT.slice(0,4):z.time.slice(1,5)==GMT.slice(0,4))
+        let res3=res2.filter(z=>z.time[0]=='0'?z.time.slice(1,5)<GMT.slice(0,5):z.time.slice(0,2)>12?(z.time.slice(0,2)-12+z.time.slice(2,5))<GMT.slice(0,5):z.time<GMT.slice(0,5))
+        let res4=res2.filter(z=>z.time.slice(0,2)>12?(z.time.slice(0,2)-12+z.time.slice(2,5))==GMT.slice(0,5):z.time==GMT.slice(0,5))
         if(res4.length!==0){
           ejs.renderFile(__dirname + "/views/ReminderEmail.ejs", {userName: d[i].username, time: GMT, date: T.slice(0,10), mongoDB: res4},
           (err,data)=>{
@@ -68,11 +60,15 @@ function performUpdate(){
         }
         User.findByIdAndUpdate(Id,{$pull:{log:{$in: res}}, $addToSet:{overdue: res}},{new: true}, (err,user)=>{
           if(err) console.log(err)
-          console.log(user)
+          
+          user.save();
+          
         } )
         User.findByIdAndUpdate(Id,{$pull:{log:{$in: res3}}, $addToSet:{overdue: res3}},{new: true}, (err,user)=>{
           if(err) console.log(err)
           console.log(user)
+          user.save();
+          
         } )
         
 
