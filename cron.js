@@ -63,13 +63,10 @@ function performUpdate(){
         User.findByIdAndUpdate(Id,{$pull:{log:{$in: res}}, $addToSet:{overdue: res}},{new: true}, (err,user)=>{
           if(err) console.log(err)
           
-          user.save();
-          
         } )
         User.findByIdAndUpdate(Id,{$pull:{log:{$in: pastTime}}, $addToSet:{overdue: pastTime}},{new: true}, (err,user)=>{
           if(err) console.log(err)
           console.log(user)
-          user.save();
           
         } )
         

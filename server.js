@@ -19,10 +19,6 @@ app.use(express.static(path.join(__dirname, 'views/')))
 mongoose.connect(process.env.DATABASE_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 const db = mongoose.connection
 
-User.find({}, (err, d)=>{
-    if (err) console.log(err)
-    if (d) console.log(d)
-})
 
 
 db.on('error', (error) => console.error(error))
