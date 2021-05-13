@@ -152,7 +152,6 @@ router.post('/register', async (req, res) => {
         const  email = req.body.data.email
         const  username = req.body.data.user
         const  password = req.body.data.password
-        const plainPassword=req.body.data.password
         console.log(req.body.data)
         console.log(req.body.data.email)
         const checkuser= await User.findOne({email: email})
@@ -160,7 +159,7 @@ router.post('/register', async (req, res) => {
         let t= new Date();
         let GMT= t.toLocaleString();
 
-        await User.create({email,username,password, plainPassword}, (err,user)=>{
+        await User.create({email,username,password}, (err,user)=>{
           ejs.renderFile(__dirname + "/views/RegisterEmail.ejs", {userName: username, time: GMT.slice(10,GMT.length), date: GMT.slice(0,10)},
         (err,data)=>{
           if (err) console.log(err)
