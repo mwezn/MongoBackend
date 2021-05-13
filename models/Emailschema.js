@@ -19,11 +19,7 @@ var UserSchema = new mongoose.Schema({
   },
   log: [],
   overdue: [],
-  done: [],
-  plainPassword: {
-    type: String,
-    required: true,
-  }
+  done: []
 
 
 });
