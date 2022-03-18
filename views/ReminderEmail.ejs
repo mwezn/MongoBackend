@@ -1,0 +1,18 @@
+<html>
+<head>
+<title>This is a reminder</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+</head>
+<body style="background-color: #5e82e6;; font-family: 'Courier New', Courier, monospace;">
+<h1 style="box-shadow: 5px 10px rgb(104, 104, 146);">Hello <%= userName %></h1>
+<h2>Email sent at <%= time %> on <%= date %></h2>
+<h2>Your task(s) due now are: </h2>
+<ul>
+    <% for (var i = 0; i < mongoDB.length; i++) { %>
+        <li style="border: 1px solid #ddd; background-color: #aaafff;"> <%= JSON.stringify(mongoDB[i]) %> </li>
+    <% } %>
+</ul>
+<img src="https://www.itl.cat/pngfile/big/103-1032762_related-images-ergonomic-office-set-up.jpg">
+</body>
+</html>
