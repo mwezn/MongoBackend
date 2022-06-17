@@ -31,8 +31,6 @@ db.once('open', () => {
     server.listen(process.env.PORT,()=>{
         console.log("The API is running on Port:" + process.env.PORT)
     })
-    
-
 })
 
 

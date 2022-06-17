@@ -25,87 +25,94 @@ var transporter = nodemailer.createTransport({
       }
 });
 
+router.get('/users', async (req, res)=>{
+  const users= await User.find({});
+  res.json(users)
+})
 
-router.post('/updateCentralState', async (req, res, done)=>{
+
+router.delete('/:id', async (req, res)=>{
+  try {
+      const d = await User.findOneAndDelete({_id: req.params.id})
+      res.json(d)
+  } catch(err) {
+      res.status(500).json({err})
+  }
+})
+
+router.post('/updateCentralState', async (req, res)=>{
   let id=req.body.data['_id']
   await User.findOne({_id: id}, (err,person)=>{
     if (err) console.log(err)
-    //done(null, person)
     res.json(person)
   })
 })
 
-router.post('/removeDone', async (req, res, done)=>{
+router.post('/removeDone', async (req, res)=>{
   console.log(req.body)
   let update=req.body.Item;
   let query=req.body.data["_id"];
   User.findByIdAndUpdate(query, {$pull: { done: update[0]}},{new:true},(err,person)=>{
     if(err) console.log(err)
     console.log(person)
-    done(null, person)
     res.json(person)
   })
 })
 
-router.post('/dueDone', async (req, res, done)=>{
+router.post('/dueDone', async (req, res )=>{
   console.log(req.body)
   let update=req.body.Item;
   let query=req.body.data["_id"];
   User.findByIdAndUpdate(query, {$pull: { log: update[0]},$addToSet: {done: update[0]}},{new:true},(err,person)=>{
     if(err) console.log(err)
     console.log(person)
-    done(null, person)
     res.json(person)
   })
 })
 
-router.post('/overdueDone', async (req, res, done)=>{
+router.post('/overdueDone', async (req, res)=>{
   console.log(req.body)
   let update=req.body.Item;
   let query=req.body.data["_id"];
   User.findByIdAndUpdate(query, {$pull: { overdue: update[0]},$addToSet: {done: update[0]}},{new:true},(err,person)=>{
     if(err) console.log(err)
     console.log(person)
-    done(null, person)
     res.json(person)
   })
 })
 
 
-router.post('/removeTodo', async (req, res, done)=>{
+router.post('/removeTodo', async (req, res) =>{
   console.log(req.body)
   let update=req.body.Item;
   let query=req.body.data["_id"];
   User.findByIdAndUpdate(query, {$pull: { log: update[0]}},{new:true},(err,person)=>{
     if(err) console.log(err)
     console.log(person)
-    done(null, person)
     res.json(person)
   })
 })
 
-router.post('/removeOverdue', async (req, res, done)=>{
+router.post('/removeOverdue', async (req, res) =>{
   console.log(req.body)
   let update=req.body.Item;
   let query=req.body.data["_id"];
   User.findByIdAndUpdate(query, {$pull: { overdue: update[0]}},{new:true},(err,person)=>{
     if(err) console.log(err)
     console.log(person)
-    done(null, person)
     res.json(person)
   })
 })
 
 
 
-router.post('/addTodo', async (req,res,done)=>{
+router.post('/addTodo', async (req, res)=>{
   console.log("LOG"+ req.body.data.log)
   let query={_id: req.body.data["_id"]}
   let update= { $addToSet: { log: req.body.data.log }}
   User.findOneAndUpdate(query,update, {new: true}, (err,person)=>{
     if(err) console.log(err)
     console.log(person)
-    done(null, person)
     res.json(person)
     
   })
